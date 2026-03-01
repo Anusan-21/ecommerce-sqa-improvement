@@ -111,61 +111,63 @@ function configurePassport() {
         }
     })));
     // Twitter Strategy (standalone, without oauthUtils)
-    passport_1.default.use(new passport_twitter_1.Strategy({
-        consumerKey: process.env.TWITTER_CONSUMER_KEY,
-        consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-        callbackURL: process.env.NODE_ENV === "production"
-            ? process.env.TWITTER_CALLBACK_URL_PROD
-            : process.env.TWITTER_CALLBACK_URL_DEV,
-        includeEmail: true,
-    }, (accessToken, refreshToken, profile, done) => __awaiter(this, void 0, void 0, function* () {
-        var _a, _b, _c, _d;
-        console.log("Twitter accessToken:", accessToken);
-        console.log("Twitter refreshToken:", refreshToken);
-        console.log("Twitter profile:", JSON.stringify(profile, null, 2));
-        try {
-            if (!profile || !profile.id) {
-                console.error("Twitter profile is missing or invalid:", profile);
-                return done(new Error("Failed to fetch valid Twitter profile"));
-            }
-            const email = ((_b = (_a = profile.emails) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.value) ||
-                `twitter-${profile.id}@placeholder.com`;
-            const name = profile.displayName ||
-                profile.username ||
-                `Twitter User ${profile.id}`;
-            const avatar = ((_d = (_c = profile.photos) === null || _c === void 0 ? void 0 : _c[0]) === null || _d === void 0 ? void 0 : _d.value) || "";
-            let user = yield database_config_1.default.user.findUnique({
-                where: { email },
-            });
-            if (user) {
-                if (!user.twitterId) {
-                    user = yield database_config_1.default.user.update({
-                        where: { email },
+    if (process.env.TWITTER_CONSUMER_KEY && process.env.TWITTER_CONSUMER_SECRET) {
+        passport_1.default.use(new passport_twitter_1.Strategy({
+            consumerKey: process.env.TWITTER_CONSUMER_KEY,
+            consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+            callbackURL: process.env.NODE_ENV === "production"
+                ? process.env.TWITTER_CALLBACK_URL_PROD
+                : process.env.TWITTER_CALLBACK_URL_DEV,
+            includeEmail: true,
+        }, (accessToken, refreshToken, profile, done) => __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d;
+            console.log("Twitter accessToken:", accessToken);
+            console.log("Twitter refreshToken:", refreshToken);
+            console.log("Twitter profile:", JSON.stringify(profile, null, 2));
+            try {
+                if (!profile || !profile.id) {
+                    console.error("Twitter profile is missing or invalid:", profile);
+                    return done(new Error("Failed to fetch valid Twitter profile"));
+                }
+                const email = ((_b = (_a = profile.emails) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.value) ||
+                    `twitter-${profile.id}@placeholder.com`;
+                const name = profile.displayName ||
+                    profile.username ||
+                    `Twitter User ${profile.id}`;
+                const avatar = ((_d = (_c = profile.photos) === null || _c === void 0 ? void 0 : _c[0]) === null || _d === void 0 ? void 0 : _d.value) || "";
+                let user = yield database_config_1.default.user.findUnique({
+                    where: { email },
+                });
+                if (user) {
+                    if (!user.twitterId) {
+                        user = yield database_config_1.default.user.update({
+                            where: { email },
+                            data: {
+                                twitterId: profile.id,
+                                avatar,
+                            },
+                        });
+                    }
+                }
+                else {
+                    user = yield database_config_1.default.user.create({
                         data: {
+                            email,
+                            name,
                             twitterId: profile.id,
                             avatar,
                         },
                     });
                 }
+                const id = user.id;
+                const newAccessToken = (0, tokenUtils_1.generateAccessToken)(id);
+                const newRefreshToken = (0, tokenUtils_1.generateRefreshToken)(id);
+                return done(null, Object.assign(Object.assign({}, user), { accessToken: newAccessToken, refreshToken: newRefreshToken }));
             }
-            else {
-                user = yield database_config_1.default.user.create({
-                    data: {
-                        email,
-                        name,
-                        twitterId: profile.id,
-                        avatar,
-                    },
-                });
+            catch (error) {
+                console.error("Twitter Strategy error:", error);
+                return done(error);
             }
-            const id = user.id;
-            const newAccessToken = (0, tokenUtils_1.generateAccessToken)(id);
-            const newRefreshToken = (0, tokenUtils_1.generateRefreshToken)(id);
-            return done(null, Object.assign(Object.assign({}, user), { accessToken: newAccessToken, refreshToken: newRefreshToken }));
-        }
-        catch (error) {
-            console.error("Twitter Strategy error:", error);
-            return done(error);
-        }
-    })));
+        })));
+    }
 }

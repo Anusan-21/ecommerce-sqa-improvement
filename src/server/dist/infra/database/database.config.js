@@ -8,37 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.connectDB = void 0;
 const client_1 = require("@prisma/client");
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const prisma = new client_1.PrismaClient().$extends({
-    query: {
-        user: {
-            create(_a) {
-                return __awaiter(this, arguments, void 0, function* ({ args, query }) {
-                    if (args.data.password && typeof args.data.password === "string") {
-                        const hashedPassword = yield bcryptjs_1.default.hash(args.data.password, 10);
-                        args.data.password = hashedPassword;
-                    }
-                    return query(args);
-                });
-            },
-            update(_a) {
-                return __awaiter(this, arguments, void 0, function* ({ args, query }) {
-                    if (args.data.password && typeof args.data.password === "string") {
-                        const hashedPassword = yield bcryptjs_1.default.hash(args.data.password, 10);
-                        args.data.password = hashedPassword;
-                    }
-                    return query(args);
-                });
-            },
-        },
-    },
-});
+const prisma = new client_1.PrismaClient();
 const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield prisma.$connect();
