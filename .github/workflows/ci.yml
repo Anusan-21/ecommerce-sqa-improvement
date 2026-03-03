@@ -6,38 +6,48 @@ on:
 
 jobs:
   test-and-build:
+    name: Test and Build Client & Server
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js 24  
+        uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
 
       # Client
-      - working-directory: src/client
+      - name: Install Client Dependencies
+        working-directory: src/client
         run: npm ci
 
-      - working-directory: src/client
+      - name: Run Client Tests  
+        working-directory: src/client
         run: npm test
 
-      - working-directory: src/client
+      - name: Build Client  
+        working-directory: src/client
         run: npm run build
 
       # Server
-      - working-directory: src/server
+      - name: Install server Dependencies
+        working-directory: src/server
         run: npm ci
 
-      - working-directory: src/server
+      - name: Run Server Tests  
+        working-directory: src/server
         run: npm test
 
-      - working-directory: src/server
+      - name: Build Server
+        working-directory: src/server
         run: npm run build
 
 
-  e2e:
+  integrationTest:
+    name: E2E Integration Tests (Docker)
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     container: cypress/included:15.11.0
@@ -71,7 +81,7 @@ jobs:
           cd src/server && npm ci && npm run build
           cd ../client && npm ci && npm run build
           cd ../../
-
+            
       - name: Start app and run Cypress
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ss_ecommerce
