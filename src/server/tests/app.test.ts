@@ -1,20 +1,13 @@
-// tests/app.test.ts
+
 import request from "supertest";
 
-/**
- * Minimal test that mocks external services before importing app.
- * Put at repo-root `tests/app.test.ts`. If your test file is under src/,
- * adjust all "../src/..." paths to "../...".
- */
-
-// ----------------- MOCK STRIPE (must be before app import) -----------------
 jest.mock("stripe", () => {
-  // Return a default export that is a class with the methods you might call.
+
   return class MockStripe {
     constructor(_key?: string, _opts?: any) {
-      // no-op; don't throw if key missing
+
     }
-    // stub methods commonly used; add more if your code calls other methods
+
     customers = {
       create: jest.fn().mockResolvedValue({ id: "cus_test" }),
       retrieve: jest.fn().mockResolvedValue(null),
@@ -28,12 +21,12 @@ jest.mock("stripe", () => {
   };
 });
 
-// --- Mock DB connect ---
+
 jest.mock("../src/infra/database/database.config", () => ({
   connectDB: jest.fn().mockResolvedValue(undefined),
 }));
 
-// --- Mock Redis client used by your app ---
+
 jest.mock("../src/infra/cache/redis", () => ({
   on: jest.fn(),
   connect: jest.fn().mockResolvedValue(undefined),
