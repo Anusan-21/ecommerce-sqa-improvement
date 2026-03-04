@@ -49,7 +49,7 @@ describe("Shop page with GraphQL mocks (self-contained intercepts)", () => {
       }
 
       if (opName.includes("products") || /products/.test(query)) {
-        // default product set
+  
         req.reply(mockProductsDefault);
         return;
       }
