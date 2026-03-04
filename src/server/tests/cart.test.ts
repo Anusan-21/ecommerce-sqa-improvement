@@ -78,7 +78,6 @@ describe("CartController - addToCart, updateCartItem, removeFromCart (positive)"
     const req = {
       params: { itemId: "item-2" },
       body: { quantity: 5 },
-      // include session (and optionally user) to avoid accessing undefined.session.id in logs
       session: { id: "sess-2" },
       user: { id: "user-2" },
     } as unknown as Request;
@@ -106,7 +105,7 @@ describe("CartController - addToCart, updateCartItem, removeFromCart (positive)"
 
     const req = {
       params: { itemId: "item-3" },
-      session: { id: "sess-3" }, // include session for logs
+      session: { id: "sess-3" },
       user: { id: "user-3" },
     } as unknown as Request;
 

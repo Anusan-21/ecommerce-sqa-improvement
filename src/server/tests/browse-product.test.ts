@@ -63,7 +63,6 @@ describe("ProductController.getAllProducts (positive)", () => {
     await flush();
 
     expect(productServiceMock.getAllProducts).toHaveBeenCalledTimes(1);
-    // called with the query object
     expect(productServiceMock.getAllProducts).toHaveBeenCalledWith(req.query);
 
     expect(sendResponse).toHaveBeenCalledTimes(1);

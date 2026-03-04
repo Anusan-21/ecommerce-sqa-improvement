@@ -44,7 +44,6 @@ describe("ProductController.updateProduct (positive)", () => {
   const flush = () => new Promise((r) => setImmediate(r));
 
   it("should update product and send 200 response (no variant files)", async () => {
-    // Arrange
     const productId = "prod-123";
     const reqBody = {
       name: "New Product Name",
@@ -74,19 +73,18 @@ describe("ProductController.updateProduct (positive)", () => {
     const req = {
       params: { id: productId },
       body: reqBody,
-      files: [], // no files => processedVariants undefined
+      files: [],
       user: { id: "admin-1" },
       session: { id: "sess-1" },
     } as unknown as Request;
 
-    // Act
+
     const handler = controller.updateProduct;
     handler(req, res as Response, next);
     await flush();
 
-    // Assert service called with correct args
+
     expect(productServiceMock.updateProduct).toHaveBeenCalledTimes(1);
-    // Build expected updatedData as controller does
     const expectedUpdatedData = {
       name: reqBody.name,
       slug: `${reqBody.name}-slug`,
@@ -96,11 +94,9 @@ describe("ProductController.updateProduct (positive)", () => {
       isTrending: true,
       isBestSeller: false,
       categoryId: "cat-1",
-      // variants not present
+
     };
     expect(productServiceMock.updateProduct).toHaveBeenCalledWith(productId, expectedUpdatedData);
-
-    // sendResponse called with 200 and returned product
     expect(sendResponse).toHaveBeenCalledTimes(1);
     const [_resArg, statusArg, payloadArg] = sendResponse.mock.calls[0];
     expect(statusArg).toBe(200);
@@ -108,8 +104,6 @@ describe("ProductController.updateProduct (positive)", () => {
       data: { product: updatedProduct },
       message: "Product updated successfully",
     });
-
-    // next not called
     expect(next).not.toHaveBeenCalled();
   });
 });

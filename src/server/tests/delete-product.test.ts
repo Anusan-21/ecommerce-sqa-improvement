@@ -53,11 +53,10 @@ describe("ProductController.deleteProduct (positive)", () => {
     handler(req, res as Response, next);
     await flush();
 
-    // service called correctly
+
     expect(productServiceMock.deleteProduct).toHaveBeenCalledTimes(1);
     expect(productServiceMock.deleteProduct).toHaveBeenCalledWith("product-123");
 
-    // sendResponse called with 200
     expect(sendResponse).toHaveBeenCalledTimes(1);
     const [_resArg, statusArg, payloadArg] = sendResponse.mock.calls[0];
     expect(statusArg).toBe(200);

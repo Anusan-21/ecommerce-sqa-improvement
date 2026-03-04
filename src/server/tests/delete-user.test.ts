@@ -49,7 +49,7 @@ describe("UserController.deleteUser", () => {
 
     const handler = controller.deleteUser;
     handler(req, res as Response, next);
-    await Promise.resolve(); // allow microtasks to finish
+    await Promise.resolve();
 
     expect(userServiceMock.deleteUser).toHaveBeenCalledTimes(1);
     expect(userServiceMock.deleteUser).toHaveBeenCalledWith(

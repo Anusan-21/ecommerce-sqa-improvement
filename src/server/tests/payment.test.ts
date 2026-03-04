@@ -30,7 +30,6 @@ describe("PaymentController - getUserPayments & getPaymentDetails (positive)", (
     } as unknown as jest.Mocked<PaymentService>;
 
     controller = new PaymentController(paymentServiceMock);
-    // we don't rely on real express Response methods because sendResponse is mocked
     res = {} as Partial<Response>;
     next = jest.fn();
   });

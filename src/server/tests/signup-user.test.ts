@@ -45,7 +45,7 @@ describe("UserController.createAdmin", () => {
       name: "Admin",
       email: "a@ex.com",
       avatar: null,
-      role: "ADMIN", // casted as any later if your real ROLE is an enum
+      role: "ADMIN",
     };
 
     (userServiceMock.createAdmin as jest.Mock).mockResolvedValue(fakeAdmin as any);
@@ -58,7 +58,6 @@ describe("UserController.createAdmin", () => {
 
     const handler = controller.createAdmin;
     handler(req, res as Response, next);
-    // allow async internals to run
     await Promise.resolve();
 
     expect(userServiceMock.createAdmin).toHaveBeenCalledTimes(1);

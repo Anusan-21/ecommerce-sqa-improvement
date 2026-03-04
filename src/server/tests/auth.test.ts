@@ -62,7 +62,7 @@ describe("AuthController (positive flows)", () => {
     next = jest.fn();
   });
 
-  // helper to flush pending microtasks / promise resolutions
+
   const flush = () => new Promise((r) => setImmediate(r));
 
   it("signup - should register user, set cookies, merge carts and send 201", async () => {
@@ -88,18 +88,15 @@ describe("AuthController (positive flows)", () => {
     handler(req, res as Response, next);
     await flush();
 
-    // cookies set for refresh & access
     expect((res.cookie as jest.Mock).mock.calls.length).toBe(2);
     expect((res.cookie as jest.Mock).mock.calls[0][0]).toBe("refreshToken");
     expect((res.cookie as jest.Mock).mock.calls[1][0]).toBe("accessToken");
 
-    // cart merge called
     expect((cartServiceMock.mergeCartsOnLogin as jest.Mock)).toHaveBeenCalledWith(
       "sess-1",
       "user-1"
     );
 
-    // sendResponse called with 201 and expected payload
     expect(sendResponse).toHaveBeenCalledTimes(1);
     const [_resArg, statusArg, payloadArg] = sendResponse.mock.calls[0];
     expect(statusArg).toBe(201);
@@ -136,18 +133,15 @@ describe("AuthController (positive flows)", () => {
     handler(req, res as Response, next);
     await flush();
 
-    // cookies set
     expect((res.cookie as jest.Mock).mock.calls.length).toBe(2);
     expect((res.cookie as jest.Mock).mock.calls[0][0]).toBe("refreshToken");
     expect((res.cookie as jest.Mock).mock.calls[1][0]).toBe("accessToken");
 
-    // cart merge
     expect((cartServiceMock.mergeCartsOnLogin as jest.Mock)).toHaveBeenCalledWith(
       "sess-2",
       "user-2"
     );
 
-    // sendResponse called with 200 and expected payload
     expect(sendResponse).toHaveBeenCalledTimes(1);
     const [_r, status, payload] = sendResponse.mock.calls[0];
     expect(status).toBe(200);
@@ -162,7 +156,6 @@ describe("AuthController (positive flows)", () => {
   });
 
   it("signout - should blacklist token when needed, clear cookies and send 200", async () => {
-    // jwt.decode returns an object with future absExp
     const future = Math.floor(Date.now() / 1000) + 60 * 60; // +1 hour
     (jwt.decode as jest.Mock).mockReturnValue({ absExp: future });
 
@@ -178,16 +171,13 @@ describe("AuthController (positive flows)", () => {
     handler(req, res as Response, next);
     await flush();
 
-    // blacklist called with ttl > 0
     expect((tokenUtils.blacklistToken as jest.Mock)).toHaveBeenCalledTimes(1);
     expect((tokenUtils.blacklistToken as jest.Mock).mock.calls[0][0]).toBe("refresh-abc");
 
-    // clearCookie called for refreshToken and accessToken
     expect((res.clearCookie as jest.Mock).mock.calls.length).toBe(2);
     expect((res.clearCookie as jest.Mock).mock.calls[0][0]).toBe("refreshToken");
     expect((res.clearCookie as jest.Mock).mock.calls[1][0]).toBe("accessToken");
 
-    // sendResponse called with 200
     expect(sendResponse).toHaveBeenCalledTimes(1);
     const [_r, status, payload] = sendResponse.mock.calls[0];
     expect(status).toBe(200);
