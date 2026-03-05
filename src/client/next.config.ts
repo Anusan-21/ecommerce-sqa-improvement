@@ -5,14 +5,12 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARN !!
     ignoreBuildErrors: true,
   },
   images: {
     domains: [
+      "images.unsplash.com",
+      "plus.unsplash.com",
       "m.media-amazon.com",
       "www.bestbuy.com",
       "www.dyson.com",

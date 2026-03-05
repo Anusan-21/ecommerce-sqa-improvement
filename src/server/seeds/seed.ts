@@ -38,10 +38,8 @@ async function cleanup() {
 async function main() {
   console.log("🌱 Starting database seeding...");
 
-  // Clean up existing data first
   await cleanup();
 
-  // 1. Create users
   const hashedPassword = await bcrypt.hash("password123", 12);
 
   const superadmin = await prisma.user.upsert({
@@ -77,7 +75,6 @@ async function main() {
     },
   });
 
-  // 2. Create categories
   const electronicsCategory = await prisma.category.upsert({
     where: { slug: "electronics" },
     update: {},
@@ -85,7 +82,9 @@ async function main() {
       name: "Electronics",
       slug: "electronics",
       description: "Electronic devices and gadgets",
-      images: [],
+      images: [
+        "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?q=80&w=629&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      ],
     },
   });
 
@@ -96,7 +95,9 @@ async function main() {
       name: "Clothing",
       slug: "clothing",
       description: "Fashion and apparel",
-      images: [],
+      images: [
+        "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      ],
     },
   });
 
@@ -107,7 +108,9 @@ async function main() {
       name: "Footwear",
       slug: "footwear",
       description: "Shoes and sneakers",
-      images: [],
+      images: [
+        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXxlbnwwfHwwfHx8MA%3D%3D"
+      ],
     },
   });
 
@@ -118,7 +121,9 @@ async function main() {
       name: "Furniture",
       slug: "furniture",
       description: "Home and office furniture",
-      images: [],
+      images: [
+        "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      ],
     },
   });
 
@@ -129,11 +134,12 @@ async function main() {
       name: "Accessories",
       slug: "accessories",
       description: "Fashion accessories and jewelry",
-      images: [],
+      images: [
+        "https://images.unsplash.com/photo-1656428361240-47e1737b7dce?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      ],
     },
   });
 
-  // 3. Create attributes
   const sizeAttribute = await prisma.attribute.upsert({
     where: { slug: "size" },
     update: {},
